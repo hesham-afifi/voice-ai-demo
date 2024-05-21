@@ -1,0 +1,13 @@
+<div class="container">
+  <h1>Hello world!</h1>
+
+  <button (click)="start()">Start</button> |
+  <button (click)="suspend()">suspend</button> |
+  <button (click)="resume()">resume</button> |
+  <button (click)="close()">close</button>
+
+  <canvas #audioCanvas width="800" height="200"></canvas>
+  <hr />
+  <button (click)="play()">Play</button>
+</div>
+<router-outlet></router-outlet>
