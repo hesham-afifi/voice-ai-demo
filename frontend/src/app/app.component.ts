@@ -53,6 +53,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     // Listen for messages from the audio worklet
     node.port.onmessage = (event) => {
       const inputBuffer = event.data;
+      
       this.signalRService.send(inputBuffer);
 
       this.audioBuffer.push(inputBuffer);

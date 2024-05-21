@@ -24,7 +24,8 @@ export class SignalRService {
     this.connection = new HubConnectionBuilder()
       .configureLogging('Information')
       .withAutomaticReconnect()
-      .withUrl(Environment.SignalRURL)
+      .withUrl(Environment.SignalRURL
+      )
       .build();
   }
 
@@ -39,12 +40,17 @@ export class SignalRService {
     });
   }
 
-  send(buffer: Float32Array) {
+  send(buffer: number[]) {
     if (this.connection.state !== HubConnectionState.Connected) {
       return;
     }
+
+    console.log('Sending data... {0}',buffer);
+
+    let floatArray: number[] = Array.from(buffer);
+
     this.connection
-      .invoke('send', buffer)
+      .invoke('BroadcastStream', floatArray)
       .catch((err) => console.log('Error while sending data: ' + err));
   }
 }
