@@ -1,0 +1,7 @@
+.stream-dot {
+  flex-grow: 1;
+  height: 10px;
+  background-color: white;
+  border-radius: 100px;
+  margin-right: 5px;
+}

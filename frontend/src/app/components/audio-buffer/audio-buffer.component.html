@@ -1,0 +1,9 @@
+<button class="btn px-3 btn-success" (click)="start()">Start</button> |
+<button class="btn px-3 btn-warning" (click)="suspend()">suspend</button> |
+<button class="btn px-3 btn-primary" (click)="resume()">resume</button> |
+<button class="btn px-3 btn-danger" (click)="close()">close</button>
+
+<canvas class="border my-3" #audioCanvas width="800" height="200"></canvas>
+<button class="d-block btn px-3 btn-dark" (click)="play()">
+  Play the Buffer
+</button>

@@ -1,13 +1,16 @@
 <div class="container">
-  <h1>Hello world!</h1>
+  <ul class="nav nav-underline my-3">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/audio-buffer" routerLinkActive="active">
+        <span>Audio buffer</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/audio-stream" routerLinkActive="active">
+        <span>Audio Stream</span>
+      </a>
+    </li>
+  </ul>
 
-  <button (click)="start()">Start</button> |
-  <button (click)="suspend()">suspend</button> |
-  <button (click)="resume()">resume</button> |
-  <button (click)="close()">close</button>
-
-  <canvas #audioCanvas width="800" height="200"></canvas>
-  <hr />
-  <button (click)="play()">Play</button>
+  <router-outlet></router-outlet>
 </div>
-<router-outlet></router-outlet>
