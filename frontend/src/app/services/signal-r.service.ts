@@ -25,7 +25,9 @@ export class SignalRService {
     this.connection = new HubConnectionBuilder()
       .configureLogging(LogLevel.Information)
       .withAutomaticReconnect()
-      .withUrl(Environment.SignalRURL)
+      .withUrl(Environment.SignalRURL, {
+        withCredentials: false,
+      })
       .build();
   }
 
