@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class AudioProcessingService {
   audioContext!: AudioContext;
   audioBuffer: Float32Array[] = [];
-  audioWorkletScriptPath = 'assets/js/audioWorklet.js';
+  audioWorkletScriptPath = 'assets/audioWorklet.js';
 
   constructor() {}
 

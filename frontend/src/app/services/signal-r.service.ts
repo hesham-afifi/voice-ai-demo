@@ -45,7 +45,9 @@ export class SignalRService {
       console.log('aiAgentTest: ', reply);
     });
 
-    this.connection.on('messageReceived', (received) => {});
+    this.connection.on('messageReceived', (received) => {
+      console.log('messageReceived: ', received);
+    });
 
     this.connection.on('status', (reply) => {
       console.log('Connection Status: ', reply);

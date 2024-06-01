@@ -42,7 +42,8 @@ export class AudioBufferComponent implements OnInit {
         this.signalRService.stream(inputBuffer);
         this.canvasDrawingService.drawWaveform(
           inputBuffer,
-          this.audioCanvas()?.nativeElement
+          this.audioCanvas()?.nativeElement,
+          3
         );
       }
     );
