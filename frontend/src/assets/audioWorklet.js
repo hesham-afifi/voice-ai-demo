@@ -3,10 +3,13 @@ registerProcessor(
   class extends AudioWorkletProcessor {
     constructor() {
       super();
-      this.threshold = 0.01; // Adjust this threshold value for silence detection
+      this.threshold = 0.1; // Adjust this threshold value for silence detection
       this.samplingRate = 44100; // The sampling rate of the audio context
       this.lowFrequency = 300; // Lower bound of the frequency range
       this.highFrequency = 3000; // Upper bound of the frequency range
+
+      this.silenceDuration = 500; // Silence duration threshold in milliseconds
+      this.silenceStartTime = null; // To track when silence starts
     }
 
     // Apply a band-pass filter to isolate specific frequencies
@@ -33,16 +36,37 @@ registerProcessor(
       const rms = Math.sqrt(
         buffer.reduce((sum, value) => sum + value * value, 0) / buffer.length
       );
-      return rms < this.threshold;
+      const isBelowThreshold = rms < this.threshold;
+      const currentTime = this.currentTimeInMs(); // Get current time in milliseconds
+
+      if (isBelowThreshold) {
+        if (this.silenceStartTime === null) {
+          this.silenceStartTime = currentTime;
+        } else if (
+          currentTime - this.silenceStartTime >=
+          this.silenceDuration
+        ) {
+          return true; // Silence detected for the required duration
+        }
+      } else {
+        this.silenceStartTime = null; // Reset silence start time if noise is detected
+      }
+
+      return false;
     }
 
     process(inputs, outputs, parameters) {
       const inputBuffer = inputs[0][0];
       if (inputBuffer && !this.isSilent(inputBuffer)) {
-        this.port.postMessage(inputBuffer);
+        // this.port.postMessage(inputBuffer); // for testing only that the client can play the audio buffer
+        this.port.postMessage([...inputBuffer]);
       }
 
       return true;
+    }
+
+    currentTimeInMs() {
+      return new Date().getTime();
     }
   }
 );

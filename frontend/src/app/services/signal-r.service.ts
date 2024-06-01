@@ -38,6 +38,7 @@ export class SignalRService {
       .catch((err) => console.log('Error while starting connection: ', err));
 
     this.connection.on('send', (data) => {
+      console.log('Received audioBuffer: ', data);
       this.audioBufferSubject.next(data);
     });
 
