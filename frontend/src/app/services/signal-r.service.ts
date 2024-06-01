@@ -3,6 +3,7 @@ import {
   HubConnection,
   HubConnectionBuilder,
   HubConnectionState,
+  LogLevel,
 } from '@microsoft/signalr';
 import { Environment } from '../../environments/environments';
 import { BehaviorSubject } from 'rxjs';
@@ -22,7 +23,7 @@ export class SignalRService {
 
   constructor() {
     this.connection = new HubConnectionBuilder()
-      .configureLogging('Information')
+      .configureLogging(LogLevel.Information)
       .withAutomaticReconnect()
       .withUrl(Environment.SignalRURL)
       .build();
@@ -32,10 +33,20 @@ export class SignalRService {
     this.connection
       .start()
       .then(() => console.log('Connection started'))
-      .catch((err) => console.log('Error while starting connection: ' + err));
+      .catch((err) => console.log('Error while starting connection: ', err));
 
     this.connection.on('send', (data) => {
       this.audioBufferSubject.next(data);
+    });
+
+    this.connection.on('aiAgentTest', (reply) => {
+      console.log('aiAgentTest: ', reply);
+    });
+
+    this.connection.on('messageReceived', (received) => {});
+
+    this.connection.on('status', (reply) => {
+      console.log('Connection Status: ', reply);
     });
   }
 
@@ -45,8 +56,8 @@ export class SignalRService {
     }
 
     this.connection
-      .invoke('Send', data)
-      .catch((err) => console.log('Error while sending data: ' + err));
+      .invoke('BroadcastStream', data)
+      .catch((err) => console.log('Error while sending data: ', err));
   }
 
   stream(buffer: Float32Array) {

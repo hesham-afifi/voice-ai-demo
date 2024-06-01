@@ -21,7 +21,7 @@ export class AudioProcessingService {
 
     node.port.onmessage = (event) => {
       const inputBuffer = event.data;
-      this.audioBuffer.push(inputBuffer);
+      // this.audioBuffer.push(inputBuffer); // for testing only
       streamHandler(inputBuffer);
     };
 
@@ -42,8 +42,9 @@ export class AudioProcessingService {
     this.audioContext.close();
   }
 
-  async playBuffer() {
-    const buffer = await this.createAudioBuffer(this.audioBuffer);
+  async playBuffer(audioBuffer = this.audioBuffer) {
+    if (!this.audioContext) return;
+    const buffer = await this.createAudioBuffer(audioBuffer);
     const mediaStream = this.audioBufferToMediaStream(buffer);
     const audioElement = new Audio();
     audioElement.srcObject = mediaStream;

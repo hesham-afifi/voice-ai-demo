@@ -31,6 +31,9 @@ export class AudioBufferComponent implements OnInit {
 
   ngOnInit(): void {
     this.signalRService.start();
+    this.signalRService.audioBuffer$.subscribe((audioBuffer) => {
+      this.audioProcessingService.playBuffer(audioBuffer);
+    });
   }
 
   async start() {

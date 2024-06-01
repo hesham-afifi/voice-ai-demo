@@ -1,1 +1,4 @@
-
+:host {
+  display: block;
+  max-width: 800px;
+}
