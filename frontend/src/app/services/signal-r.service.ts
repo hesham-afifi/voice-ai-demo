@@ -38,7 +38,7 @@ export class SignalRService {
       .catch((err) => console.log('Error while starting connection: ', err));
 
     this.connection.on('send', (data) => {
-      console.log('Received audioBuffer: ', data);
+      console.log('Received audioBuffer: ');
       this.audioBufferSubject.next(data);
     });
 
@@ -51,7 +51,7 @@ export class SignalRService {
     });
 
     this.connection.on('status', (reply) => {
-      console.log('Connection Status: ', reply);
+      console.log('Status: ', reply);
     });
   }
 
@@ -60,7 +60,7 @@ export class SignalRService {
       return;
     }
 
-    console.log('Sending data: ', { silence, data });
+    // console.log('Sending data: ', { silence, data });
 
     this.connection
       .send('BroadcastStream', { silence, data })
