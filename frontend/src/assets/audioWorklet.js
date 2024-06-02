@@ -3,7 +3,7 @@ registerProcessor(
   class extends AudioWorkletProcessor {
     constructor() {
       super();
-      this.threshold = 0.1; // Adjust this threshold value for silence detection
+      this.threshold = 0.03; // Adjust this threshold value for silence detection
       this.samplingRate = 44100; // The sampling rate of the audio context
       this.lowFrequency = 300; // Lower bound of the frequency range
       this.highFrequency = 3000; // Upper bound of the frequency range
@@ -57,9 +57,12 @@ registerProcessor(
 
     process(inputs, outputs, parameters) {
       const inputBuffer = inputs[0][0];
-      if (inputBuffer && !this.isSilent(inputBuffer)) {
-        // this.port.postMessage(inputBuffer); // for testing only that the client can play the audio buffer
-        this.port.postMessage([...inputBuffer]);
+      if (inputBuffer) {
+        this.port.postMessage({
+          isSilent: this.isSilent(inputBuffer),
+          inputBuffer: inputBuffer,
+          // inputBufferNumbers: [...inputBuffer],
+        });
       }
 
       return true;

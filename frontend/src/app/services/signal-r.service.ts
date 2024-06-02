@@ -13,7 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SignalRService {
   connection!: HubConnection;
-  audioBufferSubject = new BehaviorSubject<Float32Array[]>([]);
+  audioBufferSubject = new BehaviorSubject<string>('');
 
   get audioBuffer$() {
     return this.audioBufferSubject.asObservable();
@@ -55,18 +55,20 @@ export class SignalRService {
     });
   }
 
-  private send(data: any): void {
+  private send(data: any, silence = false): void {
     if (this.connection.state !== HubConnectionState.Connected) {
       return;
     }
 
+    console.log('Sending data: ', { silence, data });
+
     this.connection
-      .invoke('BroadcastStream', data)
+      .send('BroadcastStream', { silence, data })
       .catch((err) => console.log('Error while sending data: ', err));
   }
 
-  stream(buffer: Float32Array) {
-    this.send(buffer);
+  stream(buffer: Float32Array | number[], silence = false): void {
+    this.send(buffer, silence);
   }
 
   sendAudioChunk(audioChunk: Blob): void {

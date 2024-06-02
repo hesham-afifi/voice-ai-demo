@@ -31,15 +31,15 @@ export class AudioBufferComponent implements OnInit {
 
   ngOnInit(): void {
     this.signalRService.start();
-    this.signalRService.audioBuffer$.subscribe((audioBuffer) => {
-      this.audioProcessingService.playBuffer(audioBuffer);
+    this.signalRService.audioBuffer$.subscribe((base64Audio) => {
+      this.audioProcessingService.playBlob(base64Audio);
     });
   }
 
   async start() {
     const audioContext = await this.audioProcessingService.start(
-      (inputBuffer) => {
-        this.signalRService.stream(inputBuffer);
+      (inputBuffer, silence) => {
+        this.signalRService.stream([...inputBuffer], silence);
         this.canvasDrawingService.drawWaveform(
           inputBuffer,
           this.audioCanvas()?.nativeElement,

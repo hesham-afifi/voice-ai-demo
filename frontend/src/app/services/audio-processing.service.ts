@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
 
+interface InputBufferMsg {
+  isSilent: boolean;
+  inputBuffer: Float32Array;
+  inputBufferNumbers: number[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -11,7 +17,7 @@ export class AudioProcessingService {
   constructor() {}
 
   async start(
-    streamHandler: (inputBuffer: Float32Array) => void
+    streamHandler: (inputBuffer: Float32Array, silence: boolean) => void
   ): Promise<AudioContext> {
     this.audioContext = new AudioContext();
     await this.audioContext.audioWorklet.addModule(this.audioWorkletScriptPath);
@@ -20,9 +26,10 @@ export class AudioProcessingService {
     const node = new AudioWorkletNode(this.audioContext, 'audio-processor');
 
     node.port.onmessage = (event) => {
-      const inputBuffer = event.data;
+      const data = <InputBufferMsg>event.data;
+      streamHandler(data.inputBuffer, data.isSilent);
+
       // this.audioBuffer.push(inputBuffer); // for testing only
-      streamHandler(inputBuffer);
     };
 
     audioSource.connect(node);
@@ -42,18 +49,16 @@ export class AudioProcessingService {
     this.audioContext.close();
   }
 
-  async playBuffer(audioBuffer = this.audioBuffer) {
+  playBuffer(audioBuffer = this.audioBuffer) {
     if (!this.audioContext) return;
-    const buffer = await this.createAudioBuffer(audioBuffer);
+    const buffer = this.createAudioBuffer(audioBuffer);
     const mediaStream = this.audioBufferToMediaStream(buffer);
     const audioElement = new Audio();
     audioElement.srcObject = mediaStream;
     audioElement.play();
   }
 
-  private async createAudioBuffer(
-    inputBuffer: Float32Array[]
-  ): Promise<AudioBuffer> {
+  private createAudioBuffer(inputBuffer: Float32Array[]): AudioBuffer {
     const numberOfChannels = 1;
     const length = inputBuffer.reduce((acc, buffer) => acc + buffer.length, 0);
     const sampleRate = this.audioContext.sampleRate;
@@ -82,5 +87,23 @@ export class AudioProcessingService {
     bufferSource.start();
 
     return outputNode.stream;
+  }
+
+  base64ToBlob(base64: string, mime: string): Blob {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mime });
+  }
+
+  playBlob(base64: string) {
+    if (!base64) return;
+    const blob = this.base64ToBlob(base64, 'audio/mpeg');
+    const audio = new Audio();
+    audio.src = URL.createObjectURL(blob);
+    audio.play();
   }
 }
