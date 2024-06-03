@@ -4,7 +4,7 @@ import { AudioStreamComponent } from './components/audio-stream/audio-stream.com
 
 export const routes: Routes = [
   {
-    path: 'audio-buffer',
+    path: '',
     component: AudioBufferComponent,
   },
   {
@@ -12,8 +12,8 @@ export const routes: Routes = [
     component: AudioStreamComponent,
   },
   {
-    path: '',
-    redirectTo: 'audio-buffer',
+    path: '**',
+    redirectTo: '',
     pathMatch: 'full',
   },
 ];
